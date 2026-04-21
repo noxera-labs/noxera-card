@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Noxera Labs">
+<meta name="theme-color" content="#04080F">
+<title>Noxera Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800&family=Space+Mono:wght@400;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:#04080F;font-family:'Outfit',sans-serif;}
+
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;z-index:100;
+  background:#04080F;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+  transition:opacity .6s ease;
+}
+#splash.out{opacity:0;pointer-events:none;}
+
+.splash-logo{
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  animation:splashIn .8s cubic-bezier(.16,1,.3,1) forwards;
+  opacity:0;transform:translateY(20px);
+}
+@keyframes splashIn{to{opacity:1;transform:translateY(0);}}
+
+.splash-wm{
+  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;color:#EAEFF8;
+}
+.splash-wm .sx{color:#00CFFF;}
+.splash-sub{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.55em;text-transform:uppercase;
+  color:rgba(0,207,255,.5);
+}
+.splash-tagline{
+  font-family:'Outfit',sans-serif;font-size:13px;
+  color:rgba(255,255,255,.3);letter-spacing:.08em;
+  animation:splashIn .8s .3s cubic-bezier(.16,1,.3,1) forwards;
+  opacity:0;transform:translateY(10px);
+}
+.splash-bar{
+  width:40px;height:2px;
+  background:linear-gradient(90deg,transparent,#00CFFF,transparent);
+  animation:splashBar 1.2s .5s ease forwards;
+  opacity:0;
+}
+@keyframes splashBar{to{opacity:.8;width:80px;}}
+
+/* ── MAIN ── */
+#main{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:24px 20px;
+  position:relative;overflow:hidden;
+}
+
+canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+.top-bar{
+  position:fixed;top:0;left:0;right:0;
+  padding:16px 24px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:10;
+  background:linear-gradient(180deg,rgba(4,8,15,.95) 0%,transparent 100%);
+}
+.top-logo-row{display:flex;align-items:center;gap:8px;}
+.top-wm{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#EAEFF8;}
+.top-wm .tx{color:#00CFFF;}
+.top-sub{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.5em;text-transform:uppercase;color:rgba(0,207,255,.4);margin-top:1px;}
+.top-dot{width:6px;height:6px;border-radius:50%;background:#00CFFF;animation:blink 2.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px rgba(0,207,255,.9);}50%{opacity:.1;box-shadow:none;}}
+
+/* ── PERSON SWITCHER ── */
+.switcher{
+  position:relative;z-index:10;
+  display:flex;gap:8px;margin-bottom:20px;
+}
+.sw-btn{
+  font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(0,207,255,.4);
+  border:1px solid rgba(0,207,255,.15);border-radius:20px;
+  padding:6px 14px;cursor:pointer;background:transparent;
+  transition:all .25s ease;
+}
+.sw-btn.active{
+  color:#00CFFF;border-color:rgba(0,207,255,.5);
+  background:rgba(0,207,255,.06);
+}
+
+/* ── CARD ── */
+.card-wrap{position:relative;z-index:10;width:100%;max-width:360px;}
+
+.card-shell{width:100%;aspect-ratio:1.75/1;position:relative;}
+
+.card-face{
+  position:absolute;inset:0;border-radius:18px;overflow:hidden;
+  border:1px solid rgba(0,207,255,.2);
+  background:#070D18;
+}
+.card-face.hidden{display:none;}
+.card-face::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 65% 55% at 105% -5%,rgba(0,207,255,.08) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 65% at -5% 105%,rgba(0,150,255,.05) 0%,transparent 65%);
+}
+.card-face::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,207,255,.01) 3px,rgba(0,207,255,.01) 4px);
+}
+
+.inner{position:relative;z-index:1;height:100%;padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;}
+
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-wm{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#EAEFF8;}
+.logo-wm .lx{color:#00CFFF;}
+.logo-sub2{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.5em;text-transform:uppercase;color:rgba(0,207,255,.45);margin-top:1px;}
+
+.name{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1;}
+.role{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#00CFFF;margin-top:5px;opacity:.7;}
+
+.bottom-row{display:flex;align-items:flex-end;justify-content:space-between;}
+.tags{display:flex;gap:4px;flex-wrap:wrap;}
+.tag{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,207,255,.5);border:1px solid rgba(0,207,255,.15);border-radius:4px;padding:2px 6px;}
+.fhint{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.18);}
+
+.acc-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00CFFF,transparent);opacity:.5;}
+.acc-corner{position:absolute;top:0;right:0;width:50px;height:50px;border-top:1px solid rgba(0,207,255,.2);border-right:1px solid rgba(0,207,255,.2);border-radius:0 18px 0 0;}
+.cdot{position:absolute;top:20px;right:22px;width:6px;height:6px;border-radius:50%;background:#00CFFF;animation:blink 2.8s ease-in-out infinite;}
+
+/* back */
+.bh{display:flex;align-items:center;justify-content:space-between;}
+.blt{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:rgba(0,207,255,.22);}
+.clist{display:flex;flex-direction:column;gap:9px;}
+.ci{display:flex;align-items:center;gap:10px;}
+.ci-icon{width:26px;height:26px;border-radius:6px;border:1px solid rgba(0,207,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(0,207,255,.03);}
+.ci-lbl{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,207,255,.4);line-height:1;}
+.ci-val{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;line-height:1;}
+
+/* ── TAP HINT ── */
+.tap-hint{
+  position:relative;z-index:10;
+  margin-top:14px;
+  font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(0,207,255,.3);
+  text-align:center;
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  padding:16px 24px calc(16px + env(safe-area-inset-bottom));
+  display:flex;justify-content:center;gap:24px;
+  background:linear-gradient(0deg,rgba(4,8,15,.95) 0%,transparent 100%);
+  z-index:10;
+}
+.nav-link{
+  font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(0,207,255,.35);
+  text-decoration:none;border-bottom:1px solid rgba(0,207,255,.15);
+  padding-bottom:2px;
+}
+
+/* ── ADD TO HOMESCREEN BANNER ── */
+#hs-banner{
+  position:fixed;bottom:70px;left:16px;right:16px;
+  background:rgba(0,207,255,.08);
+  border:1px solid rgba(0,207,255,.2);
+  border-radius:12px;padding:12px 16px;
+  display:flex;align-items:center;gap:12px;
+  z-index:20;
+  animation:slideUp .4s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+#hs-banner.hidden{display:none;}
+.hs-text{flex:1;}
+.hs-title{font-size:12px;font-weight:700;color:#fff;}
+.hs-sub{font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,207,255,.5);margin-top:2px;}
+.hs-close{font-size:18px;color:rgba(255,255,255,.3);cursor:pointer;padding:4px;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <canvas id="splash-bg" style="position:absolute;inset:0;"></canvas>
+  <div class="splash-logo">
+    <svg viewBox="0 0 80 80" width="64" height="64">
+      <defs>
+        <linearGradient id="sg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".9"/><stop offset="100%" stop-color="#0060CC" stop-opacity=".5"/></linearGradient>
+        <linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".55"/><stop offset="100%" stop-color="#00CFFF" stop-opacity=".12"/></linearGradient>
+      </defs>
+      <polygon points="40,5 5,40 40,40" fill="rgba(0,207,255,0.07)"/>
+      <polygon points="40,5 75,40 40,40" fill="rgba(0,207,255,0.04)"/>
+      <polygon points="5,40 40,75 40,40" fill="rgba(0,207,255,0.05)"/>
+      <polygon points="75,40 40,75 40,40" fill="rgba(0,207,255,0.025)"/>
+      <line x1="40" y1="5" x2="5" y2="40" stroke="url(#sg1)" stroke-width="1.6"/>
+      <line x1="40" y1="5" x2="75" y2="40" stroke="url(#sg1)" stroke-width="1.6"/>
+      <line x1="5" y1="40" x2="40" y2="75" stroke="url(#sg2)" stroke-width="1.6"/>
+      <line x1="75" y1="40" x2="40" y2="75" stroke="url(#sg2)" stroke-width="1.6"/>
+      <line x1="5" y1="40" x2="75" y2="40" stroke="rgba(0,207,255,0.28)" stroke-width="1.3"/>
+      <line x1="40" y1="5" x2="40" y2="75" stroke="rgba(0,207,255,0.18)" stroke-width="1" stroke-dasharray="2.5 3.5"/>
+      <circle cx="40" cy="5" r="3.2" fill="#00CFFF"/>
+      <circle cx="40" cy="75" r="3.2" fill="#00CFFF"/>
+      <circle cx="5" cy="40" r="2.2" fill="rgba(0,207,255,0.6)"/>
+      <circle cx="75" cy="40" r="2.2" fill="rgba(0,207,255,0.6)"/>
+      <circle cx="40" cy="40" r="1.8" fill="rgba(0,207,255,0.35)"/>
+    </svg>
+    <div>
+      <div class="splash-wm">NO<span class="sx">X</span>ERA</div>
+      <div class="splash-sub">LABS</div>
+    </div>
+  </div>
+  <div class="splash-tagline">We ignite digital futures.</div>
+  <div class="splash-bar"></div>
+</div>
+
+<!-- MAIN -->
+<canvas id="bg"></canvas>
+
+<div id="main">
+  <div class="top-bar">
+    <div class="top-logo-row">
+      <svg viewBox="0 0 80 80" width="24" height="24">
+        <defs><linearGradient id="tg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".9"/><stop offset="100%" stop-color="#0060CC" stop-opacity=".5"/></linearGradient><linearGradient id="tg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".55"/><stop offset="100%" stop-color="#00CFFF" stop-opacity=".12"/></linearGradient></defs>
+        <polygon points="40,5 5,40 40,40" fill="rgba(0,207,255,0.07)"/><polygon points="40,5 75,40 40,40" fill="rgba(0,207,255,0.04)"/><polygon points="5,40 40,75 40,40" fill="rgba(0,207,255,0.05)"/><polygon points="75,40 40,75 40,40" fill="rgba(0,207,255,0.025)"/>
+        <line x1="40" y1="5" x2="5" y2="40" stroke="url(#tg1)" stroke-width="1.6"/><line x1="40" y1="5" x2="75" y2="40" stroke="url(#tg1)" stroke-width="1.6"/><line x1="5" y1="40" x2="40" y2="75" stroke="url(#tg2)" stroke-width="1.6"/><line x1="75" y1="40" x2="40" y2="75" stroke="url(#tg2)" stroke-width="1.6"/>
+        <circle cx="40" cy="5" r="3.2" fill="#00CFFF"/><circle cx="40" cy="75" r="3.2" fill="#00CFFF"/>
+      </svg>
+      <div><div class="top-wm">NO<span class="tx">X</span>ERA</div><div class="top-sub">LABS</div></div>
+    </div>
+    <div class="top-dot"></div>
+  </div>
+
+  <div style="height:64px;"></div>
+
+  <div class="switcher">
+    <button class="sw-btn active" onclick="switchPerson('raf',this)">Raphael</button>
+    <button class="sw-btn" onclick="switchPerson('noah',this)">Noah</button>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-shell" id="cs" onclick="doFlip()">
+
+      <!-- RAF FRONT -->
+      <div class="card-face" id="rf">
+        <div class="inner">
+          <div class="logo-row">
+            <svg viewBox="0 0 80 80" width="32" height="32"><defs><linearGradient id="rf1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".9"/><stop offset="100%" stop-color="#0060CC" stop-opacity=".5"/></linearGradient><linearGradient id="rf2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".55"/><stop offset="100%" stop-color="#00CFFF" stop-opacity=".12"/></linearGradient></defs><polygon points="40,5 5,40 40,40" fill="rgba(0,207,255,0.07)"/><polygon points="40,5 75,40 40,40" fill="rgba(0,207,255,0.04)"/><polygon points="5,40 40,75 40,40" fill="rgba(0,207,255,0.05)"/><polygon points="75,40 40,75 40,40" fill="rgba(0,207,255,0.025)"/><line x1="40" y1="5" x2="5" y2="40" stroke="url(#rf1)" stroke-width="1.6"/><line x1="40" y1="5" x2="75" y2="40" stroke="url(#rf1)" stroke-width="1.6"/><line x1="5" y1="40" x2="40" y2="75" stroke="url(#rf2)" stroke-width="1.6"/><line x1="75" y1="40" x2="40" y2="75" stroke="url(#rf2)" stroke-width="1.6"/><line x1="5" y1="40" x2="75" y2="40" stroke="rgba(0,207,255,0.28)" stroke-width="1.3"/><line x1="40" y1="5" x2="40" y2="75" stroke="rgba(0,207,255,0.18)" stroke-width="1" stroke-dasharray="2.5 3.5"/><circle cx="40" cy="5" r="3.2" fill="#00CFFF"/><circle cx="40" cy="75" r="3.2" fill="#00CFFF"/><circle cx="5" cy="40" r="2.2" fill="rgba(0,207,255,0.6)"/><circle cx="75" cy="40" r="2.2" fill="rgba(0,207,255,0.6)"/><circle cx="40" cy="40" r="1.8" fill="rgba(0,207,255,0.35)"/></svg>
+            <div><div class="logo-wm">NO<span class="lx">X</span>ERA</div><div class="logo-sub2">LABS</div></div>
+          </div>
+          <div><div class="name">Raphael Ghazaryan</div><div class="role">Co-Founder · AI Developer</div></div>
+          <div class="bottom-row"><div class="tags"><span class="tag">KI</span><span class="tag">LLM</span><span class="tag">Web</span><span class="tag">App</span></div><div class="fhint">tap to flip →</div></div>
+        </div>
+        <div class="cdot"></div><div class="acc-corner"></div><div class="acc-bar"></div>
+      </div>
+
+      <!-- RAF BACK -->
+      <div class="card-face hidden" id="rb">
+        <div class="inner">
+          <div class="bh"><svg viewBox="0 0 80 80" width="20" height="20"><defs><linearGradient id="rb1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".9"/><stop offset="100%" stop-color="#0060CC" stop-opacity=".5"/></linearGradient><linearGradient id="rb2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".55"/><stop offset="100%" stop-color="#00CFFF" stop-opacity=".12"/></linearGradient></defs><polygon points="40,5 5,40 40,40" fill="rgba(0,207,255,0.07)"/><polygon points="40,5 75,40 40,40" fill="rgba(0,207,255,0.04)"/><polygon points="5,40 40,75 40,40" fill="rgba(0,207,255,0.05)"/><polygon points="75,40 40,75 40,40" fill="rgba(0,207,255,0.025)"/><line x1="40" y1="5" x2="5" y2="40" stroke="url(#rb1)" stroke-width="1.6"/><line x1="40" y1="5" x2="75" y2="40" stroke="url(#rb1)" stroke-width="1.6"/><line x1="5" y1="40" x2="40" y2="75" stroke="url(#rb2)" stroke-width="1.6"/><line x1="75" y1="40" x2="40" y2="75" stroke="url(#rb2)" stroke-width="1.6"/><circle cx="40" cy="5" r="3.2" fill="#00CFFF"/><circle cx="40" cy="75" r="3.2" fill="#00CFFF"/></svg><div class="blt">noxera-labs.de</div></div>
+          <div class="clist">
+            <div class="ci"><div class="ci-icon"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 4l6 4.5 6-4.5M2 4h12v9H2V4z" stroke="#00CFFF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="ci-lbl">Email</div><div class="ci-val">raphael@noxera-labs.de</div></div></div>
+            <div class="ci"><div class="ci-icon"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#00CFFF" stroke-width="1.2"/><path d="M5.5 8h5M8 5.5v5" stroke="#00CFFF" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="ci-lbl">Website</div><div class="ci-val">noxera-labs.de</div></div></div>
+            <div class="ci"><div class="ci-icon"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2.5" stroke="#00CFFF" stroke-width="1.2"/><path d="M5 11V7m0-2v.01M8 11V9m3 2V7" stroke="#00CFFF" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="ci-lbl">LinkedIn</div><div class="ci-val">in/raphael-ghazaryan</div></div></div>
+          </div>
+          <div class="fhint" style="text-align:right">← zurück</div>
+        </div>
+        <div class="acc-corner"></div><div class="acc-bar"></div>
+      </div>
+
+      <!-- NOAH FRONT -->
+      <div class="card-face hidden" id="nf">
+        <div class="inner">
+          <div class="logo-row">
+            <svg viewBox="0 0 80 80" width="32" height="32"><defs><linearGradient id="nf1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".9"/><stop offset="100%" stop-color="#0060CC" stop-opacity=".5"/></linearGradient><linearGradient id="nf2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".55"/><stop offset="100%" stop-color="#00CFFF" stop-opacity=".12"/></linearGradient></defs><polygon points="40,5 5,40 40,40" fill="rgba(0,207,255,0.07)"/><polygon points="40,5 75,40 40,40" fill="rgba(0,207,255,0.04)"/><polygon points="5,40 40,75 40,40" fill="rgba(0,207,255,0.05)"/><polygon points="75,40 40,75 40,40" fill="rgba(0,207,255,0.025)"/><line x1="40" y1="5" x2="5" y2="40" stroke="url(#nf1)" stroke-width="1.6"/><line x1="40" y1="5" x2="75" y2="40" stroke="url(#nf1)" stroke-width="1.6"/><line x1="5" y1="40" x2="40" y2="75" stroke="url(#nf2)" stroke-width="1.6"/><line x1="75" y1="40" x2="40" y2="75" stroke="url(#nf2)" stroke-width="1.6"/><line x1="5" y1="40" x2="75" y2="40" stroke="rgba(0,207,255,0.28)" stroke-width="1.3"/><line x1="40" y1="5" x2="40" y2="75" stroke="rgba(0,207,255,0.18)" stroke-width="1" stroke-dasharray="2.5 3.5"/><circle cx="40" cy="5" r="3.2" fill="#00CFFF"/><circle cx="40" cy="75" r="3.2" fill="#00CFFF"/><circle cx="5" cy="40" r="2.2" fill="rgba(0,207,255,0.6)"/><circle cx="75" cy="40" r="2.2" fill="rgba(0,207,255,0.6)"/><circle cx="40" cy="40" r="1.8" fill="rgba(0,207,255,0.35)"/></svg>
+            <div><div class="logo-wm">NO<span class="lx">X</span>ERA</div><div class="logo-sub2">LABS</div></div>
+          </div>
+          <div><div class="name">Noah Wilm</div><div class="role">Co-Founder · Web Developer</div></div>
+          <div class="bottom-row"><div class="tags"><span class="tag">Web</span><span class="tag">App</span><span class="tag">UI/UX</span><span class="tag">Game</span></div><div class="fhint">tap to flip →</div></div>
+        </div>
+        <div class="cdot"></div><div class="acc-corner"></div><div class="acc-bar"></div>
+      </div>
+
+      <!-- NOAH BACK -->
+      <div class="card-face hidden" id="nb">
+        <div class="inner">
+          <div class="bh"><svg viewBox="0 0 80 80" width="20" height="20"><defs><linearGradient id="nb1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".9"/><stop offset="100%" stop-color="#0060CC" stop-opacity=".5"/></linearGradient><linearGradient id="nb2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00CFFF" stop-opacity=".55"/><stop offset="100%" stop-color="#00CFFF" stop-opacity=".12"/></linearGradient></defs><polygon points="40,5 5,40 40,40" fill="rgba(0,207,255,0.07)"/><polygon points="40,5 75,40 40,40" fill="rgba(0,207,255,0.04)"/><polygon points="5,40 40,75 40,40" fill="rgba(0,207,255,0.05)"/><polygon points="75,40 40,75 40,40" fill="rgba(0,207,255,0.025)"/><line x1="40" y1="5" x2="5" y2="40" stroke="url(#nb1)" stroke-width="1.6"/><line x1="40" y1="5" x2="75" y2="40" stroke="url(#nb1)" stroke-width="1.6"/><line x1="5" y1="40" x2="40" y2="75" stroke="url(#nb2)" stroke-width="1.6"/><line x1="75" y1="40" x2="40" y2="75" stroke="url(#nb2)" stroke-width="1.6"/><circle cx="40" cy="5" r="3.2" fill="#00CFFF"/><circle cx="40" cy="75" r="3.2" fill="#00CFFF"/></svg><div class="blt">noxera-labs.de</div></div>
+          <div class="clist">
+            <div class="ci"><div class="ci-icon"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 4l6 4.5 6-4.5M2 4h12v9H2V4z" stroke="#00CFFF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="ci-lbl">Email</div><div class="ci-val">noah@noxera-labs.de</div></div></div>
+            <div class="ci"><div class="ci-icon"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#00CFFF" stroke-width="1.2"/><path d="M5.5 8h5M8 5.5v5" stroke="#00CFFF" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="ci-lbl">Website</div><div class="ci-val">noxera-labs.de</div></div></div>
+            <div class="ci"><div class="ci-icon"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2.5" stroke="#00CFFF" stroke-width="1.2"/><path d="M5 11V7m0-2v.01M8 11V9m3 2V7" stroke="#00CFFF" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="ci-lbl">LinkedIn</div><div class="ci-val">in/noah-wilm</div></div></div>
+          </div>
+          <div class="fhint" style="text-align:right">← zurück</div>
+        </div>
+        <div class="acc-corner"></div><div class="acc-bar"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tap-hint">Karte antippen zum umdrehen</div>
+
+  <div class="bottom-nav">
+    <a class="nav-link" href="https://noxera-labs.de" target="_blank">Website</a>
+    <a class="nav-link" href="mailto:raphael@noxera-labs.de">Email</a>
+    <a class="nav-link" href="https://linkedin.com/company/noxera-labs" target="_blank">LinkedIn</a>
+  </div>
+
+  <div id="hs-banner">
+    <div class="hs-text">
+      <div class="hs-title">Zum Homescreen hinzufügen</div>
+      <div class="hs-sub">Teilen → "Zum Home-Bildschirm"</div>
+    </div>
+    <div class="hs-close" onclick="document.getElementById('hs-banner').classList.add('hidden')">×</div>
+  </div>
+
+</div>
+
+<script>
+// ── State ──
+let currentPerson = 'raf'; // 'raf' or 'noah'
+let isFlipped = false;
+let busy = false;
+
+function getActiveFaces() {
+  if (currentPerson === 'raf') return { front: 'rf', back: 'rb' };
+  return { front: 'nf', back: 'nb' };
+}
+
+function doFlip() {
+  if (busy) return; busy = true;
+  const sh = document.getElementById('cs');
+  const { front, back } = getActiveFaces();
+  const vis = document.getElementById(isFlipped ? back : front);
+  const hid = document.getElementById(isFlipped ? front : back);
+  const t = 150, s = performance.now();
+  function out(n) {
+    const p = Math.min((n-s)/t,1), e = p<.5?2*p*p:-1+(4-2*p)*p;
+    sh.style.transform = `scaleX(${1-e})`;
+    if (p<1){requestAnimationFrame(out);return;}
+    vis.classList.add('hidden'); hid.classList.remove('hidden');
+    isFlipped = !isFlipped;
+    const s2 = performance.now();
+    function inn(n2){
+      const p2=Math.min((n2-s2)/t,1),e2=p2<.5?2*p2*p2:-1+(4-2*p2)*p2;
+      sh.style.transform=`scaleX(${e2})`;
+      if(p2<1){requestAnimationFrame(inn);return;}
+      sh.style.transform=''; busy=false;
+    }
+    requestAnimationFrame(inn);
+  }
+  requestAnimationFrame(out);
+}
+
+function switchPerson(person, btn) {
+  if (person === currentPerson) return;
+  if (busy) return; busy = true;
+  document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const sh = document.getElementById('cs');
+  const oldFaces = getActiveFaces();
+  const oldVis = document.getElementById(isFlipped ? oldFaces.back : oldFaces.front);
+  const t = 120, s = performance.now();
+  function out(n){
+    const p=Math.min((n-s)/t,1),e=p<.5?2*p*p:-1+(4-2*p)*p;
+    sh.style.transform=`scaleX(${1-e})`;
+    if(p<1){requestAnimationFrame(out);return;}
+    oldVis.classList.add('hidden');
+    currentPerson = person;
+    isFlipped = false;
+    const newFaces = getActiveFaces();
+    document.getElementById(newFaces.front).classList.remove('hidden');
+    const s2=performance.now();
+    function inn(n2){
+      const p2=Math.min((n2-s2)/t,1),e2=p2<.5?2*p2*p2:-1+(4-2*p2)*p2;
+      sh.style.transform=`scaleX(${e2})`;
+      if(p2<1){requestAnimationFrame(inn);return;}
+      sh.style.transform=''; busy=false;
+    }
+    requestAnimationFrame(inn);
+  }
+  requestAnimationFrame(out);
+}
+
+// ── Splash ──
+setTimeout(() => {
+  const sp = document.getElementById('splash');
+  sp.classList.add('out');
+  setTimeout(() => sp.style.display='none', 700);
+}, 2200);
+
+// ── Particle background (shared for both canvases) ──
+function makeParticles(canvasId, count) {
+  const cv = document.getElementById(canvasId);
+  const cx = cv.getContext('2d');
+  let W, H, pts = [];
+  function rsz() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  function init() { pts = Array.from({length:count},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*.7+.2})); }
+  function draw() {
+    cx.clearRect(0,0,W,H);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle='rgba(0,207,255,.4)';cx.fill();});
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.strokeStyle=`rgba(0,207,255,${(1-d/90)*.08})`;cx.lineWidth=.4;cx.stroke();}}
+    requestAnimationFrame(draw);
+  }
+  rsz(); init(); draw();
+  window.addEventListener('resize',()=>{rsz();init();});
+}
+makeParticles('bg', 50);
+makeParticles('splash-bg', 35);
+
+// ── Hide homescreen banner on desktop ──
+if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+  document.getElementById('hs-banner').classList.add('hidden');
+}
+</script>
+</body>
+</html>
